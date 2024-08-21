@@ -8,11 +8,7 @@ dist/
 build/
 *.log
 
-# Django
-db.sqlite3
-*.sqlite3
-/media/
-/staticfiles/
+
 
 # Virtual Environments
 emsenv/
