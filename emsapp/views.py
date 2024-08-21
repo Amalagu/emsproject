@@ -528,7 +528,7 @@ def add_account(request, customer_id):
         bank_names = request.POST.getlist('bank_name')
         account_numbers = request.POST.getlist('account_number')
         account_types = request.POST.getlist('account_type')
-
+ 
         for bank_name, account_number, account_type in zip(bank_names, account_numbers, account_types):
             BankAccount.objects.create(
                 customer=customer,
