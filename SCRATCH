@@ -1,0 +1,381 @@
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Form</h6>
+                <form>
+                    <div class="row">
+                        <!-- Column 1 -->
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="floatingInput1"
+                                    placeholder="name@example.com">
+                                <label for="floatingInput1">Email address</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="floatingPassword1"
+                                    placeholder="Password">
+                                <label for="floatingPassword1">Password</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="floatingSelect1"
+                                    aria-label="Floating label select example">
+                                    <option selected>Open this select menu</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                                <label for="floatingSelect1">Works with selects</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea1"
+                                    style="height: 150px;"></textarea>
+                                <label for="floatingTextarea1">Comments</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked1" checked>
+                                <label class="form-check-label" for="flexCheckChecked1">
+                                    Checked checkbox
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Column 2 -->
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="floatingInput2"
+                                    placeholder="name@example.com">
+                                <label for="floatingInput2">Email address</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="floatingPassword2"
+                                    placeholder="Password">
+                                <label for="floatingPassword2">Password</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="floatingSelect2"
+                                    aria-label="Floating label select example">
+                                    <option selected>Open this select menu</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                                <label for="floatingSelect2">Works with selects</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
+                                    style="height: 150px;"></textarea>
+                                <label for="floatingTextarea2">Comments</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked2" checked>
+                                <label class="form-check-label" for="flexCheckChecked2">
+                                    Checked checkbox
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Sign in</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Form End -->
+
+class CryptoTransactionForm(forms.ModelForm):
+class Meta:
+model = CryptoTransaction
+fields = [
+'timestamp', 'customer', 'transaction_type', 'coin_value', 'coin_quantity',
+'rate', 'coin_type', 'bonus', 'account_paid_into', 'settled', 'comments'
+]
+widgets = {
+'timestamp': forms.DateTimeInput(attrs={
+'class': 'form-control', 'placeholder': 'Timestamp'
+}),
+'customer': forms.Select(attrs={
+'class': 'form-select', 'aria-label': 'Customer'
+}),
+'transaction_type': forms.Select(attrs={
+'class': 'form-select', 'aria-label': 'Transaction Type'
+}),
+'coin_value': forms.NumberInput(attrs={
+'class': 'form-control', 'placeholder': 'Coin Value in USD'
+}),
+'coin_quantity': forms.NumberInput(attrs={
+'class': 'form-control', 'placeholder': 'Coin Quantity'
+}),
+'rate': forms.NumberInput(attrs={
+'class': 'form-control', 'placeholder': 'Exchange Rate USD to NGN'
+}),
+'coin_type': forms.Select(attrs={
+'class': 'form-select', 'aria-label': 'Coin Type'
+}),
+'bonus': forms.NumberInput(attrs={
+'class': 'form-control', 'placeholder': 'Bonus in NGN'
+}),
+'account_paid_into': forms.SelectMultiple(attrs={
+'class': 'form-select', 'aria-label': 'Accounts Paid Into'
+}),
+'settled': forms.CheckboxInput(attrs={
+'class': 'form-check-input', 'id': 'flexCheckChecked1'
+}),
+'comments': forms.Textarea(attrs={
+'class': 'form-control', 'placeholder': 'Leave a comment here', 'style': 'height: 150px;'
+}),
+}
+
+class GiftCardTransactionForm(forms.ModelForm):
+class Meta:
+model = GiftCardTransaction
+fields = [
+'timestamp', 'customer', 'transaction_type', 'card_value',
+'rate', 'card_type', 'card_country', 'bonus', 'accounts_paid_into', 'settled', 'comments'
+]
+widgets = {
+'timestamp': forms.DateTimeInput(attrs={
+'class': 'form-control', 'placeholder': 'Timestamp'
+}),
+'customer': forms.Select(attrs={
+'class': 'form-select', 'aria-label': 'Customer'
+}),
+'transaction_type': forms.Select(attrs={
+'class': 'form-select', 'aria-label': 'Transaction Type'
+}),
+'card_value': forms.NumberInput(attrs={
+'class': 'form-control', 'placeholder': 'Card Value in USD'
+}),
+'rate': forms.NumberInput(attrs={
+'class': 'form-control', 'placeholder': 'Exchange Rate USD to NGN'
+}),
+'card_type': forms.Select(attrs={
+'class': 'form-select', 'aria-label': 'Card Type'
+}),
+'card_country': forms.TextInput(attrs={
+'class': 'form-control', 'placeholder': 'Card Country'
+}),
+'bonus': forms.NumberInput(attrs={
+'class': 'form-control', 'placeholder': 'Bonus in NGN'
+}),
+'accounts_paid_into': forms.SelectMultiple(attrs={
+'class': 'form-select', 'aria-label': 'Accounts Paid Into'
+}),
+'settled': forms.CheckboxInput(attrs={
+'class': 'form-check-input', 'id': 'flexCheckChecked2'
+}),
+'comments': forms.Textarea(attrs={
+'class': 'form-control', 'placeholder': 'Leave a comment here', 'style': 'height: 150px;'
+}),
+££££££££££££££££££££££££££££££££££££££££££££££££££}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags, title, etc. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Form</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'path/to/your/custom.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Your form HTML here -->
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'path/to/your/custom.js' %}"></script>
+
+    <!-- Form Toggle Script -->
+    <script>
+        function showForm(formType) {
+            document.getElementById('crypto-form').style.display = formType === 'crypto' ? 'block' : 'none';
+            document.getElementById('giftcard-form').style.display = formType === 'giftcard' ? 'block' : 'none';
+        }
+
+        // Ensure the default form is displayed
+        document.addEventListener('DOMContentLoaded', function () {
+            showForm('crypto'); // or 'giftcard' based on your preference
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+£££££££££££££££££££££££££££££££££££££££££££££££££££££££
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Transaction Form</h6>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row mt-4">
+
+                    </div>
+                    <!-- Toggle buttons -->
+                    <div class="btn-group mb-4" role="group">
+                        <button type="button" class="btn btn-primary" onclick="showForm('crypto')">Crypto
+                            Transaction</button>
+                        <button type="button" class="btn btn-secondary" onclick="showForm('giftcard')">Gift
+                            Card Transaction</button>
+                    </div>
+                    <!-- Crypto Form -->
+                    <div id="crypto-form" style="display:none;">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ crypto_form.customer|as_crispy_field }}
+                                    <!-- <label for="id_transaction_type">Transaction Type</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ crypto_form.transaction_type|as_crispy_field }}
+                                    <!-- <label for="id_transaction_type">Transaction Type</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ crypto_form.coin_value|as_crispy_field }}
+                                    <!-- <label for="id_coin_value">Coin Value</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ crypto_form.coin_quantity|as_crispy_field }}
+                                    <!--  <label for="id_coin_quantity">Coin Quantity</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ crypto_form.rate|as_crispy_field }}
+                                    <!-- <label for="id_rate">Rate</label> -->
+                                </div>
+                                <div class="form-check mb-3">
+                                    {{ crypto_form.settled|as_crispy_field }}
+                                    <!--  <label class="form-check-label" for="id_settled">Settled</label> -->
+                                </div>
+
+                            </div>
+                            <!-- COLUMN TWO -->
+                            <div class="col-sm-12 col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ crypto_form.coin_type|as_crispy_field }}
+                                    <!-- <label for="id_coin_type">Coin Type</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ crypto_form.bonus|as_crispy_field }}
+                                    <!-- <label for="id_bonus">Bonus</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ crypto_form.account_paid_into|as_crispy_field }}
+                                    <!-- <label for="id_account_paid_into">Account Paid Into</label> -->
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    {{ crypto_form.comments|as_crispy_field }}
+                                    <!--  <label class="form-check-label" for="id_settled">Settled</label> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Gift Card Form -->
+                    <div id="giftcard-form" style="display:none;">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ giftcard_form.customer|as_crispy_field }}
+                                    <!-- <label for="id_transaction_type">Transaction Type</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ giftcard_form.transaction_type|as_crispy_field }}
+                                    <!-- <label for="id_transaction_type">Transaction Type</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ giftcard_form.card_value|as_crispy_field }}
+                                    <!--  <label for="id_card_value">Card Value</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ giftcard_form.rate|as_crispy_field }}
+                                    <!--  <label for="id_rate">Rate</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ giftcard_form.card_type|as_crispy_field }}
+                                    <!-- <label for="id_card_type">Card Type</label> -->
+                                </div>
+                                <div class="form-check mb-3">
+                                    {{ giftcard_form.settled|as_crispy_field }}
+                                    <!-- <label class="form-check-label" for="id_settled">Settled</label> -->
+                                </div>
+
+                            </div>
+                            <!-- COLUMN TOW -->
+                            <div class="col-sm-12 col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ giftcard_form.card_country|as_crispy_field }}
+                                    <!-- <label for="id_card_country">Card Country</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ giftcard_form.bonus|as_crispy_field }}
+                                    <!-- <label for="id_bonus">Bonus</label> -->
+                                </div>
+                                <div class="form-floating mb-3">
+                                    {{ giftcard_form.accounts_paid_into|as_crispy_field }}
+                                    <!--  <label for="id_accounts_paid_into">Accounts Paid Into</label> -->
+                                </div>
+                                <div class="form-check mb-3">
+                                    {{ giftcard_form.comments|as_crispy_field }}
+                                    <!-- <label class="form-check-label" for="id_settled">Settled</label> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Form End -->
