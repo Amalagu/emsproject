@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
     path('', views.home, name='home'),
     #path('transaction', views.add_edit_transaction_view, name='add_edit_transaction_view' ),
     path('transaction/', views.enter_transaction_view, name='enter_transaction'),
@@ -36,6 +38,7 @@ urlpatterns += [
     path('api/crypto/<int:transaction_id>/', CryptoTransactionAPI.as_view(), name='crypto-detail'),
     path('api/giftcard/', GiftCardTransactionAPI.as_view(), name='giftcard-list-create'),
     path('api/giftcard/<int:transaction_id>/', GiftCardTransactionAPI.as_view(), name='giftcard-detail'),
+    path('api/home/', views.home_api, name='home_api'),
 ]
 
 

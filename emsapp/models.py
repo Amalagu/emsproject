@@ -10,7 +10,102 @@ from datetime import datetime, timedelta
 
 
 ########## USER ACCOUNTS #################################
+
 class CustomUserManager(BaseUserManager):
+    def create_user(self, email, first_name, last_name, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, first_name=first_name, last_name=last_name, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, first_name, last_name, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, first_name, last_name, password, **extra_fields)
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(default=timezone.now)
+
+    groups = models.ManyToManyField(
+        "auth.Group",
+        related_name="customuser_groups",
+        blank=True,
+        help_text="The groups this user belongs to.",
+        verbose_name="groups",
+    )
+    user_permissions = models.ManyToManyField(
+        "auth.Permission",
+        related_name="customuser_permissions",
+        blank=True,
+        help_text="Specific permissions for this user.",
+        verbose_name="user permissions",
+    )
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    def __str__(self):
+        return self.email
+
+
+class SalesAgent(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=True)
+    staff_id = models.CharField(max_length=15, default='')
+    date_joined = models.DateTimeField(default=timezone.now)
+
+    groups = models.ManyToManyField(
+        "auth.Group",
+        related_name="salesagent_groups",
+        blank=True,
+        help_text="The groups this sales agent belongs to.",
+        verbose_name="groups",
+    )
+    user_permissions = models.ManyToManyField(
+        "auth.Permission",
+        related_name="salesagent_permissions",
+        blank=True,
+        help_text="Specific permissions for this sales agent.",
+        verbose_name="user permissions",
+    )
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    def __str__(self):
+        return self.email
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Save first to generate pk
+        if not self.staff_id:  # Generate staff_id only if it doesn't exist
+            self.staff_id = f'EMS/ST/{self.pk}'
+            super().save(update_fields=['staff_id'])
+        
+
+
+
+""" class CustomUserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
@@ -48,6 +143,32 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+class SalesAgent(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=30);
+    last_name = models.CharField(max_length=30);
+    is_active = models.BooleanField(default=True);
+    is_staff = models.BooleanField(default=True);
+    staff_id = models.CharField(max_length=15, default='')
+    date_joined = models.DateTimeField(default=timezone.now);
+
+
+    objects = CustomUserManager();
+    USERNAME_FIELD = 'email';
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    def __str__(self):
+        return self.email
+    
+    def save(self, *args, **kwargs):
+        self.id = f'EMS/ST/{self.id}'
+        super().save(*args, **kwargs);
+
+
+
+ """
+
+
 
 ########### CUSTOMER DETAILS TABLE ##############################
 
@@ -60,6 +181,7 @@ class Customer(models.Model):
 
     surname = models.CharField(max_length=100)
     othernames = models.CharField(max_length=100)
+    displayname = models.CharField(max_length=100, null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     mobile_number = models.CharField(max_length=20, unique=True)
     phone_number = models.CharField(max_length=20, unique=True)
@@ -112,6 +234,7 @@ class BankAccount(models.Model):
     bank_name = models.CharField(max_length=100)
     account_number = models.CharField(max_length=20)
     account_type = models.CharField(max_length=50)
+    #iscompanyaccount = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.bank_name} - {self.account_number}"
@@ -139,6 +262,7 @@ class CryptoTransaction(models.Model):
         ('ETH', 'Ethereum'),
         # Add other cryptocurrencies as needed
     ]
+    
 
     timestamp = models.DateTimeField( auto_now_add= True)
     modified = models.DateTimeField( auto_now=True)
@@ -157,6 +281,7 @@ class CryptoTransaction(models.Model):
     settled_amount = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)  # amount that has been paid
     deferred_amount = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)  # amount deferred for later
     comments = models.TextField(blank=True, null=True)
+    payment_data = models.JSONField(null=True, blank=True) 
 
     def save(self, *args, **kwargs):
         self.amount = self.coin_value * self.rate
@@ -192,6 +317,7 @@ class GiftCardTransaction(models.Model):
     TRANSACTION_TYPES = [
         ('BUY', 'Buy'),
         ('SELL', 'Sell'),
+        ('SWAP', 'Swap'),
     ]
 
     CARD_TYPES = [
@@ -217,6 +343,7 @@ class GiftCardTransaction(models.Model):
     settled_amount = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)  # amount that has been paid
     deferred_amount = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)  # amount deferred for later
     comments = models.TextField(blank=True, null=True)
+    payment_data = models.JSONField(null=True, blank=True) 
 
     def save(self, *args, **kwargs):
         self.amount = self.card_value * self.rate

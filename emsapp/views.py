@@ -1,5 +1,11 @@
 
+import json
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.urls import reverse
+
 from .models import CryptoTransaction, GiftCardTransaction, Customer, BankAccount
 from .forms import CryptoTransactionForm, GiftCardTransactionForm, CustomerForm, BankAccountForm
 from datetime import date, datetime
@@ -7,6 +13,8 @@ from django.db.models import Sum, Count, Q, Value, CharField
 from decimal import Decimal
 from django.forms import modelformset_factory
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from .decorators import salesagent_required, superuser_required
+from django.contrib.auth import login
 
 #REST  FRAMWORK IMPORTS
 from rest_framework import generics
@@ -15,6 +23,46 @@ from .serializers import BankAccountSerializer
 
 
 
+
+
+
+
+def user_login(request):
+    """
+    View to handle user login for SalesAgents or other users.
+    """
+    if request.method == 'POST':
+        email = request.POST.get('email')  # Get email input
+        password = request.POST.get('password')  # Get password input
+        
+        user = authenticate(request, email=email, password=password)
+        
+        if user is not None:
+            login(request, user)
+            #messages.success(request, "Login successful!")
+            return redirect(reverse('home'))  # Replace 'dashboard' with your target view name
+        else:
+            messages.error(request, "Invalid email or password. Please try again.")
+    
+    return render(request, 'signin.html')
+
+
+
+def user_logout(request):
+    messages.success(request, "Logout successful!")
+    logout(request)
+    return redirect('login')
+
+
+
+
+
+
+
+
+
+
+@login_required(login_url='/login/')
 def home(request):
     # Fetch recent crypto transactions
     recent_crypto_transactions = CryptoTransaction.objects.all().order_by('-timestamp')[:5]
@@ -89,12 +137,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .forms import CryptoTransactionForm, GiftCardTransactionForm
 from .models import CryptoTransaction, GiftCardTransaction
 
+
+@login_required(login_url='/login/')
 def enter_transaction_view(request, transaction_type=None, transaction_id=None):
+    payment_data = []
     if transaction_type == 'crypto':
         
         if transaction_id:
             transaction = get_object_or_404(CryptoTransaction, id=transaction_id)
             crypto_form = CryptoTransactionForm(instance=transaction)
+            payment_data = json.loads(transaction.payment_data) if transaction.payment_data else []
         else:
             crypto_form = CryptoTransactionForm()
         giftcard_form = GiftCardTransactionForm()
@@ -102,6 +154,7 @@ def enter_transaction_view(request, transaction_type=None, transaction_id=None):
         if transaction_id:
             transaction = get_object_or_404(GiftCardTransaction, id=transaction_id)
             giftcard_form = GiftCardTransactionForm(instance=transaction)
+            payment_data = json.loads(transaction.payment_data) if transaction.payment_data else []
         else:
             giftcard_form = GiftCardTransactionForm()
         crypto_form = CryptoTransactionForm()
@@ -119,8 +172,26 @@ def enter_transaction_view(request, transaction_type=None, transaction_id=None):
                 crypto_form = CryptoTransactionForm(request.POST)
             if crypto_form.is_valid():
                 saved_transaction=crypto_form.save()
+
+                # Process payment gateway data
+                payment_methods = request.POST.getlist('payment_method')
+                payment_amounts = request.POST.getlist('payment_amount')
+                payment_accounts = request.POST.getlist('payment_account')
+                
+                payments = []
+                for i in range(len(payment_methods)):
+                    payments.append({
+                        'method': payment_methods[i],
+                        'amount': payment_amounts[i],
+                        'account': payment_accounts[i],
+                    })
+
+                # Save the payment gateway data as JSON (or any other format)
+                saved_transaction.payment_data = json.dumps(payments)
+                saved_transaction.save()
                 #return redirect('home')  # Replace with your success URL or view
                 return redirect('view_transaction_detail', transaction_type='crypto', transaction_id=saved_transaction.id)
+            
         elif form_type == 'giftcard_form':
             if transaction_id:
                 giftcard_form = GiftCardTransactionForm(request.POST, instance=transaction)
@@ -128,109 +199,61 @@ def enter_transaction_view(request, transaction_type=None, transaction_id=None):
                 giftcard_form = GiftCardTransactionForm(request.POST)
             if giftcard_form.is_valid():
                 saved_transaction=giftcard_form.save()
+
+                # Process payment gateway data
+                payment_methods = request.POST.getlist('payment_method')
+                payment_amounts = request.POST.getlist('payment_amount')
+                payment_accounts = request.POST.getlist('payment_account')
+                
+                payments = []
+                for i in range(len(payment_methods)):
+                    payments.append({
+                        'method': payment_methods[i],
+                        'amount': payment_amounts[i],
+                        'account': payment_accounts[i],
+                    })
+
+                # Save the payment gateway data as JSON (or any other format)
+                saved_transaction.payment_data = json.dumps(payments)
+                saved_transaction.save()
                 #return redirect('home')  # Replace with your success URL or view
                 return redirect('view_transaction_detail', transaction_type='giftcard', transaction_id=saved_transaction.id)
 
     return render(request, 'transaction_form copy.html', {
         'crypto_form': crypto_form,
         'giftcard_form': giftcard_form,
-        'transaction_type': transaction_type
+        'transaction_type': transaction_type,
+        'payment_data': payment_data
     })
-
-
-
-""" def add_edit_transaction_view(request, transaction_type, transaction_id=None):
-    if transaction_type == 'crypto':
-        if transaction_id:
-            transaction = get_object_or_404(CryptoTransaction, id=transaction_id)
-            crypto_form = CryptoTransactionForm(request.POST or None, instance=transaction)
-        else:
-            crypto_form = CryptoTransactionForm(request.POST or None)
-        giftcard_form = GiftCardTransactionForm()
-
-        if request.method == 'POST' and crypto_form.is_valid():
-            crypto_form.save()
-            return redirect('home')  # Replace with your success URL or view
-
-    elif transaction_type == 'giftcard':
-        if transaction_id:
-            transaction = get_object_or_404(GiftCardTransaction, id=transaction_id)
-            giftcard_form = GiftCardTransactionForm(request.POST or None, instance=transaction)
-        else:
-            giftcard_form = GiftCardTransactionForm(request.POST or None)
-        crypto_form = CryptoTransactionForm()
-
-        if request.method == 'POST' and giftcard_form.is_valid():
-            giftcard_form.save()
-            return redirect('home')  # Replace with your success URL or view
-
-    return render(request, 'transaction_form.html', {
-        'crypto_form': crypto_form,
-        'giftcard_form': giftcard_form,
-        'transaction_type': transaction_type
-    })
- """
-
-""" def add_edit_transaction_view(request, transaction_type, transaction_id=None):
-    if transaction_type == 'crypto':
-        if transaction_id:
-            transaction = get_object_or_404(CryptoTransaction, id=transaction_id)
-            crypto_form = CryptoTransactionForm(request.POST or None, instance=transaction)
-        else:
-            crypto_form = CryptoTransactionForm(request.POST or None)
-        
-        giftcard_form = GiftCardTransactionForm()
-
-        if request.method == 'POST' and crypto_form.is_valid():
-            crypto_form.save()
-            return redirect('home')  # Replace with your success URL or view
-
-    elif transaction_type == 'giftcard':
-        if transaction_id:
-            transaction = get_object_or_404(GiftCardTransaction, id=transaction_id)
-            giftcard_form = GiftCardTransactionForm(request.POST or None, instance=transaction)
-        else:
-            giftcard_form = GiftCardTransactionForm(request.POST or None)
-        
-        crypto_form = CryptoTransactionForm()
-
-        if request.method == 'POST' and giftcard_form.is_valid():
-            giftcard_form.save()
-            return redirect('home')  # Replace with your success URL or view
-    
-    return render(request, 'transaction_form.html', {
-        'crypto_form': crypto_form,
-        'giftcard_form': giftcard_form,
-        'transaction_type': transaction_type
-    }) """
-
-
-
 
 
 
 #path('transaction_detail', views.view_transaction_detail, name='view_transaction_detail' ),
+@login_required(login_url='/login/')
 def view_transaction_detail(request, transaction_type=None, transaction_id = None):
     transaction_type = transaction_type if transaction_type else request.GET.get('type')
     transaction_id = transaction_id if transaction_id else request.GET.get('id')
     
     if transaction_type == 'crypto':
         transaction = get_object_or_404(CryptoTransaction, id=transaction_id)
+        payment_data = json.loads(transaction.payment_data) if transaction.payment_data else []
     elif transaction_type == 'giftcard':
         transaction = get_object_or_404(GiftCardTransaction, id=transaction_id)
+        payment_data = json.loads(transaction.payment_data) if transaction.payment_data else []
     else:
         # Handle the case where the type is not recognized
         transaction = None
-
+        payment_data = []
     context = {
         'transaction': transaction,
-        'transaction_type': transaction_type
+        'transaction_type': transaction_type,
+        'payment_data' : payment_data
     }
     
     return render(request, 'transaction_details.html', context)
 
 
-
+@superuser_required
 def delete_transaction_view(request, transaction_type, transaction_id):
     if transaction_type == 'crypto':
         transaction = get_object_or_404(CryptoTransaction, id=transaction_id)
@@ -332,6 +355,7 @@ from django.db.models import Sum
 from django.db.models.functions import TruncDay, TruncMonth, TruncYear
 from datetime import datetime
 
+@superuser_required
 def all_customers(request):
     surname = request.GET.get('surname', '')
     othernames = request.GET.get('othernames', '')
@@ -414,38 +438,6 @@ def all_customers(request):
 
 
 
-""" 
-def all_customers(request):
-    surname = request.GET.get('surname', '')
-    othernames = request.GET.get('othernames', '')
-    gender = request.GET.get('gender', '')
-    date_from = request.GET.get('date_from', '')
-    date_to = request.GET.get('date_to', '')
-    order_by = request.GET.get('order_by', 'surname')
-
-    customers = Customer.objects.all()
-
-    if surname:
-        customers = customers.filter(surname__icontains=surname)
-    if othernames:
-        customers = customers.filter(othernames__icontains(othernames))
-    if gender:
-        customers = customers.filter(gender=gender)
-    if date_from:
-        customers = customers.filter(joined_date__gte=date_from)
-    if date_to:
-        customers = customers.filter(joined_date__lte=date_to)
-
-    customers = customers.order_by(order_by)
-
-    return render(request, 'customers.html', {'customers': customers}) """
-
-
-
-
-
-
-
 
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Sum
@@ -510,7 +502,7 @@ def add_or_edit_customer(request, customer_id=None):
     return render(request, 'customer_form.html', {'form': form})
 
 
-
+@superuser_required
 def delete_customer(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     if request.method == 'POST':
@@ -542,107 +534,6 @@ def add_account(request, customer_id):
     return render(request, 'bank_form.html')
 
 
-""" def add_account(request, customer_id):
-    customer = get_object_or_404(Customer, id=customer_id)
-    if request.method == 'POST':
-        form = BankAccountForm(request.POST)
-        if form.is_valid():
-            account = form.save(commit=False)
-            account.customer = customer
-            account.save()
-            return redirect('view_customer_detail', customer_id=customer.id)
-    else:
-        form = BankAccountForm()
-    return render(request, 'bank_form.html', {'form': form}) """
-
-
-
-""" def add_or_edit_bank_accounts(request, customer_id):
-    customer = get_object_or_404(Customer, id=customer_id)
-    BankAccountFormSet = modelformset_factory(BankAccount, form=BankAccountForm, extra=1, can_delete=True)
-    
-    if request.method == 'POST':
-        formset = BankAccountFormSet(request.POST, queryset=BankAccount.objects.filter(customer=customer))
-        print(formset)
-        if formset.is_valid():
-            print('FORMSET IS VALID')
-            instances = formset.save(commit=False)
-            for instance in instances:
-                instance.customer = customer
-                instance.save()
-            return redirect('view_customer_detail', customer_id=customer.id)
-    else:
-        formset = BankAccountFormSet(queryset=BankAccount.objects.filter(customer=customer))
-    
-    return render(request, 'bank_form.html', {'formset': formset, 'customer': customer}) """
-
-
-
-""" def add_or_edit_bank_accounts(request, customer_id):
-    customer = get_object_or_404(Customer, id=customer_id)
-    BankAccountFormSet = modelformset_factory(BankAccount, form=BankAccountForm, extra=1, can_delete=True)
-    
-    if request.method == 'POST':
-        formset = BankAccountFormSet(request.POST, queryset=BankAccount.objects.filter(customer=customer))
-        print(formset)
-        if formset.is_valid():
-            print("FORMSET IS VALID")
-            instances = formset.save(commit=False)
-            for instance in instances:
-                if instance.pk:
-                    print(f"PRIMARY KEY {instance}")
-                    instance.customer = customer
-                if instance.DELETE:
-                    print(f"DELETED {instance}")
-                    instance.delete()
-                else:
-                    print(f"SAVED {instance}")
-                    instance.save()
-            return redirect('view_customer_detail', customer_id=customer.id)
-    else:
-        formset = BankAccountFormSet(queryset=BankAccount.objects.filter(customer=customer))
-    
-    return render(request, 'bank_form.html', {'formset': formset, 'customer': customer}) """
-
-
-
-
-
-""" def add_or_edit_bank_accounts(request, customer_id):
-    customer = get_object_or_404(Customer, id=customer_id)
-    BankAccountFormSet = modelformset_factory(BankAccount, form=BankAccountForm, extra=1, can_delete=True)
-    
-    if request.method == 'POST':
-        formset = BankAccountFormSet(request.POST, queryset=BankAccount.objects.filter(customer=customer))
-        print(formset)
-        if formset.is_valid():
-            instances = formset.save(commit=False)
-            print(instances)
-            for instance in instances:
-                print("tHIS IS INSTANCE")
-                print(instance)
-                print("Processing instance:", instance)
-                if instance.pk:
-                    instance.customer = customer
-                    print("Set customer:", customer)
-                if instance.DELETE:
-                    print("Instance marked for deletion:", instance)
-                    instance.delete()
-                else:
-                    instance.save()
-                    print("Instance saved:", instance)
-                instance.save()
-            return redirect('view_customer_detail', customer_id=customer.id)
-        else:
-            print("Formset is not valid.")
-            for form in formset:
-                print(form.errors)
-    else:
-        formset = BankAccountFormSet(queryset=BankAccount.objects.filter(customer=customer))
-    
-    return render(request, 'bank_form.html', {'formset': formset, 'customer': customer}) """
-
-
 #####################################################################################
 #                       API VIEWS
 #
@@ -650,6 +541,85 @@ def add_account(request, customer_id):
 
 
 from django.http import JsonResponse
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def home_api(request):
+    """
+    API endpoint that provides an overview of recent transactions and today's sales data.
+    """
+    # Fetch recent crypto transactions
+    recent_crypto_transactions = CryptoTransaction.objects.all().order_by('-timestamp')[:5]
+
+    # Fetch recent gift card transactions
+    recent_giftcard_transactions = GiftCardTransaction.objects.all().order_by('-timestamp')[:5]
+
+    # Combine and sort by date
+    recent_transactions = list(recent_crypto_transactions) + list(recent_giftcard_transactions)
+    recent_transactions.sort(key=lambda x: x.timestamp, reverse=True)
+
+    # Prepare transaction data
+    transactions_data = []
+    for transaction in recent_transactions:
+        invoice_number = f"INV-{transaction.id}"
+        transaction_type = "Crypto" if isinstance(transaction, CryptoTransaction) else "GiftCard"
+        customer_name = str(transaction.customer)  # Assuming __str__ returns customer name
+        transactions_data.append({
+            'date': transaction.timestamp,
+            'id': transaction.id,
+            'invoice': invoice_number,
+            'customer': customer_name,
+            'amount': transaction.amount,
+            'status': transaction.settled,
+            'type': transaction_type,
+        })
+
+    # Get today's date
+    today = date.today()
+
+    # Calculate total sales for gift cards today
+    giftcard_sales_today = GiftCardTransaction.objects.filter(
+        timestamp__date=today
+    ).aggregate(
+        total_sales=Sum('amount'),
+        total_transactions=Count('id')
+    )
+
+    # Calculate total sales for crypto today
+    crypto_sales_today = CryptoTransaction.objects.filter(
+        timestamp__date=today
+    ).aggregate(
+        total_sales=Sum('amount'),
+        total_transactions=Count('id')
+    )
+
+    # Calculate collective totals
+    collective_sales_today = (giftcard_sales_today['total_sales'] or 0) + (crypto_sales_today['total_sales'] or 0)
+    total_transactions_today = (giftcard_sales_today['total_transactions'] or 0) + (crypto_sales_today['total_transactions'] or 0)
+
+    # Prepare response data
+    response_data = {
+        'transactions': transactions_data,
+        'giftcard_sales_today': giftcard_sales_today['total_sales'] or 0,
+        'crypto_sales_today': crypto_sales_today['total_sales'] or 0,
+        'collective_sales_today': collective_sales_today,
+        'total_transactions_today': total_transactions_today,
+    }
+
+    return Response(response_data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
 
 
 #path('api/customer/<str:customer>/account', views.list_customer_bank_account, name = "list_customer_bank_account")

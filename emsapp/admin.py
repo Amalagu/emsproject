@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Customer, BankAccount, CryptoTransaction, GiftCardTransaction
+from .models import CustomUser, Customer, BankAccount, CryptoTransaction, GiftCardTransaction, SalesAgent
 from datetime import datetime, timedelta
 from django.db.models import Sum
 
@@ -26,6 +26,49 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
+
+
+
+class SalesAgentAdmin(UserAdmin):
+    """
+    Custom admin interface for the SalesAgent model.
+    This provides a clean and structured way to manage SalesAgent users in the Django Admin.
+    """
+    model = SalesAgent
+    list_display = ('email', 'first_name', 'last_name', 'staff_id', 'is_active', 'date_joined')
+    list_filter = ('is_active', 'date_joined')
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),  # Basic credentials section
+        ('Personal Information', {'fields': ('first_name', 'last_name', 'staff_id')}),  # Personal details section
+        ('Permissions', {'fields': ('is_active', 'is_superuser', 'groups', 'user_permissions')}),  # Permission section
+        ('Important Dates', {'fields': ('last_login', 'date_joined')}),  # Tracking login and join dates
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'first_name', 'last_name', 'password1', 'password2', 'staff_id', 'is_active')}
+        ),
+    )
+    search_fields = ('email', 'staff_id', 'first_name', 'last_name')
+    ordering = ('email',)
+    filter_horizontal = ('groups', 'user_permissions')  # Allows easy selection of groups and permissions in admin
+
+# Register the SalesAgentAdmin with the model
+admin.site.register(SalesAgent, SalesAgentAdmin)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -537,6 +580,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(BankAccount)
+
 
 
 

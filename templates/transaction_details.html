@@ -156,7 +156,7 @@
                 <div class="row g-4">
                     <div class="col-sm-12">
                         <div class="bg-light rounded h-100 p-4">
-                            <h6 class="mb-4">Transaction Details</h6>
+                            <h4 class="mb-4">TRANSACTION DETAILS</h4>
                             {% if transaction_type == 'crypto' %}
                             <!-- Crypto Transaction Details -->
                             <div class="row mt-4">
@@ -181,9 +181,25 @@
                                         {{ account }},
                                         {% endfor %}
                                     </p>
+                                    <p><strong>Accounts Paid Into:</strong>
+                                        {% for account in payment_data %}
+                                        {{ account.method }},
+                                        {% endfor %}
+                                    </p>
                                     <p><strong>Comments:</strong> {{ transaction.comments }}</p>
                                 </div>
                             </div>
+                            <hr>
+                            <h6 class="mb-4">Modes Of Payment</h6>
+                            {% for account in payment_data %}
+                            <p><strong> Mode: </strong> {{ account.method }} </p>
+                            <p><strong> Account/Wallet/Type: </strong> {{ account.account }} </p>
+                            <p><strong> Amount: </strong> {{ account.amount }} </p>  
+                
+                            <p> __________________________________________________</p>
+                            {% endfor %}
+
+
                             {% elif transaction_type == 'giftcard' %}
                             <!-- Gift Card Transaction Details -->
                             <div class="row mt-4">
@@ -211,6 +227,8 @@
                                     <p><strong>Comments:</strong> {{ transaction.comments }}</p>
                                 </div>
                             </div>
+                            <hr>
+                            <h4 class="mb-4">Modes Of Payment</h4>
                             {% endif %}
                             <div class="row mt-4">
                                 <div class="col-12">
@@ -228,13 +246,6 @@
                 </div>
             </div>
             <!-- Transaction Details End -->
-
-
-
-
-
-
-
 
 
 

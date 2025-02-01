@@ -109,6 +109,7 @@ class CustomerForm(forms.ModelForm):
             'mobile_number', 
             'phone_number', 
             'address', 'dob',
+            'displayname'
             #joined_date
             ]
 

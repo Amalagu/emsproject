@@ -206,6 +206,59 @@
                             </div>
                         </div>
                     </div>
+
+
+                        <!-- Divider for the payment gateway form -->
+                        <hr>
+                    
+                        <!-- Payment Gateway Forms Start -->
+                        <h6 class="mb-4">Payment Gateways Used</h6>
+                        <div id="crypto-payment-forms-container">
+                            <!-- The first small payment gateway form -->
+                            <!--  -->
+                        </div>
+    
+                        <!-- Add Another Payment Gateway Form Button -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-secondary" onclick="addAnotherPaymentForm('crypto')">Add Another Payment Method</button>
+                            </div>
+                        </div>
+
+                        <script>
+                            var cryptoPaymentData = {{ payment_data|safe }};
+                            function populateCryptoPaymentForms(paymentData) {
+                                const container = document.getElementById('crypto-payment-forms-container');
+                                paymentData.forEach((payment) => {
+                                    const paymentForm = document.createElement('div');
+                                    paymentForm.classList.add('payment-gateway-form');
+                                    paymentForm.innerHTML = `
+                                        <div class="form-group mb-3 col-md-4">
+                                            <select name="payment_method" class="form-control">
+                                                <option value="crypto" ${payment.method === 'crypto' ? 'selected' : ''}>Crypto</option>
+                                                <option value="giftcard" ${payment.method === 'giftcard' ? 'selected' : ''}>GiftCard</option>
+                                                <option value="bank" ${payment.method === 'bank' ? 'selected' : ''}>Bank</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-3 col-md-4">
+                                            <input type="text" name="payment_amount" class="form-control" placeholder="Amount" value="${payment.amount}">
+                                        </div>
+                                        <div class="form-group mb-3 col-md-4">
+                                            <input type="text" name="payment_account" class="form-control" placeholder="Account" value="${payment.account}">
+                                        </div>
+                                        <button type="button" class="btn btn-danger" onclick="removePaymentForm(this)">Remove</button>
+                                    `;
+                                    container.appendChild(paymentForm);
+                                });
+                            }
+                            
+                            if (cryptoPaymentData.length > 0) {
+                                populateCryptoPaymentForms(cryptoPaymentData);
+                            }
+                        </script>
+
+
+
                     <div class="row mt-4">
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -261,6 +314,58 @@
                             </div>
                         </div>
                     </div>
+                        <!-- Divider for the payment gateway form -->
+                        <hr>
+                    
+                        <!-- Payment Gateway Forms Start -->
+                        <h6 class="mb-4">Payment Gateways Used</h6>
+                        <div id="giftcard-payment-forms-container">
+                            <!-- The first small payment gateway form -->
+                           <!--  -->
+                        </div>
+    
+                        <!-- Add Another Payment Gateway Form Button -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-secondary" onclick="addAnotherPaymentForm('giftcard')">Add Another Payment Method</button>
+                            </div>
+                        </div>
+
+
+                        <script>
+                            var giftcardPaymentData = {{ payment_data|safe }};
+                            function populateGiftcardPaymentForms(paymentData) {
+                                const container = document.getElementById('giftcard-payment-forms-container');
+                                paymentData.forEach((payment) => {
+                                    const paymentForm = document.createElement('div');
+                                    paymentForm.classList.add('payment-gateway-form');
+                                    paymentForm.innerHTML = `
+                                        <div class="form-group mb-3 col-md-4">
+                                            <select name="payment_method" class="form-control">
+                                                <option value="crypto" ${payment.method === 'crypto' ? 'selected' : ''}>Crypto</option>
+                                                <option value="giftcard" ${payment.method === 'giftcard' ? 'selected' : ''}>GiftCard</option>
+                                                <option value="bank" ${payment.method === 'bank' ? 'selected' : ''}>Bank</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-3 col-md-4">
+                                            <input type="text" name="payment_amount" class="form-control" placeholder="Amount" value="${payment.amount}">
+                                        </div>
+                                        <div class="form-group mb-3 col-md-4">
+                                            <input type="text" name="payment_account" class="form-control" placeholder="Account" value="${payment.account}">
+                                        </div>
+                                        <button type="button" class="btn btn-danger" onclick="removePaymentForm(this)">Remove</button>
+                                    `;
+                                    container.appendChild(paymentForm);
+                                });
+                            }
+                        
+                            if (giftcardPaymentData.length > 0) {
+                                populateGiftcardPaymentForms(giftcardPaymentData);
+                            }
+                        </script>
+
+
+
                     <div class="row mt-4">
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -319,6 +424,39 @@
                             </div>
                         </div>
                     </div>
+
+
+                        <!-- Divider for the payment gateway form -->
+                        <hr>
+                    
+                        <!-- Payment Gateway Forms Start -->
+                        <h6 class="mb-4">Payment Gateways Used</h6>
+                        <div id="crypto-payment-forms-container">
+                            <!-- The first small payment gateway form -->
+                            <div class="payment-gateway-form">
+                                <div class="form-group mb-3 col-md-4">
+                                    <select name="payment_method" class="form-control">
+                                        <option value="crypto">Crypto</option>
+                                        <option value="giftcard">GiftCard</option>
+                                        <option value="bank">Bank</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3 col-md-4">
+                                    <input type="text" name="payment_amount" class="form-control" placeholder="Amount">
+                                </div>
+                                <div class="form-group mb-3 col-md-4">
+                                    <input type="text" name="payment_account" class="form-control" placeholder="Account">
+                                </div>
+                                <button type="button" class="btn btn-danger" onclick="removePaymentForm(this)">Remove</button>
+                            </div>
+                        </div>
+    
+                        <!-- Add Another Payment Gateway Form Button -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-secondary" onclick="addAnotherPaymentForm('crypto')">Add Another Payment Method</button>
+                            </div>
+                        </div>
                     <div class="row mt-4">
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -368,6 +506,39 @@
                             </div>
                         </div>
                     </div>
+
+                        <!-- Divider for the payment gateway form -->
+                        <hr>
+                    
+                        <!-- Payment Gateway Forms Start -->
+                        <h6 class="mb-4">Payment Gateways Used</h6>
+                        <div id="giftcard-payment-forms-container">
+                            <!-- The first small payment gateway form -->
+                            <div class="payment-gateway-form">
+                                <div class="form-group mb-3 col-md-4">
+                                    <select name="payment_method" class="form-control">
+                                        <option value="crypto">Crypto</option>
+                                        <option value="giftcard">GiftCard</option>
+                                        <option value="bank">Bank</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3 col-md-4">
+                                    <input type="text" name="payment_amount" class="form-control" placeholder="Amount">
+                                </div>
+                                <div class="form-group mb-3 col-md-4">
+                                    <input type="text" name="payment_account" class="form-control" placeholder="Account">
+                                </div>
+                                <button type="button" class="btn btn-danger" onclick="removePaymentForm(this)">Remove</button>
+                            </div>
+                        </div>
+    
+                        <!-- Add Another Payment Gateway Form Button -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-secondary" onclick="addAnotherPaymentForm('giftcard')">Add Another Payment Method</button>
+                            </div>
+                        </div>
+
                     <div class="row mt-4">
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -436,288 +607,84 @@
 
 
 
-<!-- <script>
+<script>
     function showForm(formType) {
-        if (formType === 'crypto') {
-            document.getElementById('crypto-form').style.display = 'block';
-            document.getElementById('giftcard-form').style.display = 'none';
-        } else if (formType === 'giftcard') {
-            document.getElementById('crypto-form').style.display = 'none';
-            document.getElementById('giftcard-form').style.display = 'block';
-        } else {
-            // If no formType is provided, allow toggling
-            document.getElementById('crypto-form').style.display = 'none';
-            document.getElementById('giftcard-form').style.display = 'none';
-        }
+        document.getElementById('crypto-form').style.display = formType === 'crypto' ? 'block' : 'none';
+        document.getElementById('giftcard-form').style.display = formType === 'giftcard' ? 'block' : 'none';
     }
 
-    // Automatically show the correct form based on the URL
-    document.addEventListener('DOMContentLoaded', function() {
-        const url = window.location.pathname;
-        const formType = url.includes('crypto') ? 'crypto' : url.includes('giftcard') ? 'giftcard' : null;
+    function addAnotherPaymentForm(formType) {
+        let containerId = formType === 'crypto' ? 'crypto-payment-forms-container' : 'giftcard-payment-forms-container';
+        let container = document.getElementById(containerId);
 
-        if (formType) {
-            console.log("THIS IS FORM TYPE")
-            showForm(formType);
-        } else {
-            // Allow toggling if the URL doesn't specify a form type
-            document.getElementById('crypto-form').style.display = 'block';  // Default to showing one form
-            document.getElementById('giftcard-form').style.display = 'block';
-        }
-    });
+        // Create new payment form fields
+        let newPaymentForm = document.createElement('div');
+        newPaymentForm.classList.add('payment-gateway-form');
+        newPaymentForm.innerHTML = `
+            <div class="form-group mb-3 col-md-4">
+                <select name="payment_method" class="form-control">
+                    <option value="crypto">Crypto</option>
+                    <option value="giftcard">GiftCard</option>
+                    <option value="bank">Bank</option>
+                </select>
+            </div>
+            <div class="form-group mb-3 col-md-4">
+                <input type="text" name="payment_amount" class="form-control" placeholder="Amount">
+            </div>
+            <div class="form-group mb-3 col-md-4">
+                <input type="text" name="payment_account" class="form-control" placeholder="Account">
+            </div>
+            <button type="button" class="btn btn-danger" onclick="removePaymentForm(this)">Remove</button>
+        `;
+
+        // Append the new form to the respective container
+        container.appendChild(newPaymentForm);
+    }
+
+    function removePaymentForm(button) {
+        // Get the parent payment form div and remove it
+        let paymentFormDiv = button.parentElement;
+        paymentFormDiv.remove();
+    }
+</script>
+
+
+
+
+<!-- <script>
+    function showForm(formType) {
+        document.getElementById('crypto-form').style.display = formType === 'crypto' ? 'block' : 'none';
+        document.getElementById('giftcard-form').style.display = formType === 'giftcard' ? 'block' : 'none';
+    }
+
+    function addAnotherPaymentForm(formType) {
+        // Determine the correct container based on the form type
+        let containerId = formType === 'crypto' ? 'crypto-payment-forms-container' : 'giftcard-payment-forms-container';
+        let container = document.getElementById(containerId);
+
+        // Create new payment form fields
+        let newPaymentForm = document.createElement('div');
+        newPaymentForm.classList.add('payment-gateway-form');
+        newPaymentForm.innerHTML = `
+            <div class="form-group mb-3 col-md-4">
+                <select name="payment_method" class="form-control">
+                    <option value="crypto">Crypto</option>
+                    <option value="giftcard">GiftCard</option>
+                    <option value="bank">Bank</option>
+                </select>
+            </div>
+            <div class="form-group mb-3 col-md-4">
+                <input type="text" name="payment_amount" class="form-control" placeholder="Amount">
+            </div>
+            <div class="form-group mb-3 col-md-4">
+                <input type="text" name="payment_account" class="form-control" placeholder="Account">
+            </div>
+        `;
+
+        // Append the new form to the respective container
+        container.appendChild(newPaymentForm);
+    }
 </script> -->
-
-
-
-
-
-
-
-            <!-- Form Start -->
-            <!-- <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-12">
-                        <div class="bg-light rounded h-100 p-4">
-                            <h6 class="mb-4">Transaction Form</h6>
-
-                            <button class="btn btn-primary" onclick="toggleForm('crypto')">Crypto Transaction</button>
-                            <button class="btn btn-secondary" onclick="toggleForm('giftcard')">Gift Card
-                                Transaction</button>
-
-                            <form method="post" id="crypto_form" style="display:none;">
-                                {% csrf_token %}
-                                {{ crypto_form|crispy }}
-                                <button type="submit" name="crypto_submit" class="btn btn-primary">Submit
-                                    Crypto</button>
-                            </form>
-
-                            <form method="post" id="giftcard_form" style="display:none;">
-                                {% csrf_token %}
-                                {{ giftcard_form|crispy }}
-                                <button type="submit" name="giftcard_submit" class="btn btn-primary">Submit Gift
-                                    Card</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-            <!-- Form End -->
-
-
-
-
-            <!-- Form Start -->
-            <!--   <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-12">
-                        <div class="bg-light rounded h-100 p-4">
-                            <h6 class="mb-4">Form</h6>
-                            <form>
-                                <div class="row">
-                                    
-                                    <div class="col-sm-12 col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="email" class="form-control" id="floatingInput1"
-                                                placeholder="name@example.com">
-                                            <label for="floatingInput1">Email address</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" id="floatingPassword1"
-                                                placeholder="Password">
-                                            <label for="floatingPassword1">Password</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <select class="form-select" id="floatingSelect1"
-                                                aria-label="Floating label select example">
-                                                <option selected>Open this select menu</option>
-                                                <option value="1">One</option>
-                                                <option value="2">Two</option>
-                                                <option value="3">Three</option>
-                                            </select>
-                                            <label for="floatingSelect1">Works with selects</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <textarea class="form-control" placeholder="Leave a comment here"
-                                                id="floatingTextarea1" style="height: 150px;"></textarea>
-                                            <label for="floatingTextarea1">Comments</label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="checkbox" value=""
-                                                id="flexCheckChecked1" checked>
-                                            <label class="form-check-label" for="flexCheckChecked1">
-                                                Checked checkbox
-                                            </label>
-                                        </div>
-                                    </div>
-                               
-                                    <div class="col-sm-12 col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="email" class="form-control" id="floatingInput2"
-                                                placeholder="name@example.com">
-                                            <label for="floatingInput2">Email address</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" id="floatingPassword2"
-                                                placeholder="Password">
-                                            <label for="floatingPassword2">Password</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <select class="form-select" id="floatingSelect2"
-                                                aria-label="Floating label select example">
-                                                <option selected>Open this select menu</option>
-                                                <option value="1">One</option>
-                                                <option value="2">Two</option>
-                                                <option value="3">Three</option>
-                                            </select>
-                                            <label for="floatingSelect2">Works with selects</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <textarea class="form-control" placeholder="Leave a comment here"
-                                                id="floatingTextarea2" style="height: 150px;"></textarea>
-                                            <label for="floatingTextarea2">Comments</label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="checkbox" value=""
-                                                id="flexCheckChecked2" checked>
-                                            <label class="form-check-label" for="flexCheckChecked2">
-                                                Checked checkbox
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-4">
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary">Sign in</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-            <!-- Form End -->
-
-
-            <!-- Form Start -->
-            <!-- <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-12">
-                        <div class="bg-light rounded h-100 p-4">
-                            <div class="btn-group mb-4" role="group">
-                                <button type="button" class="btn btn-primary" onclick="showForm('crypto')">Crypto
-                                    Transaction</button>
-                                <button type="button" class="btn btn-secondary" onclick="showForm('giftcard')">Gift Card
-                                    Transaction</button>
-                            </div>
-                            <h6 class="mb-4">Transaction Form</h6>
-                            <form id="crypto-form" method="post" style="display:none;">
-                                {% csrf_token %}
-                                <input type="hidden" name="form_type" value="crypto_form">
-                                <div class="row mt-4">
-                                    <div class="col-sm-12 col-md-6">
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.customer|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.transaction_type|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.coin_value|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.coin_quantity|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.rate|as_crispy_field }}
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            {{ crypto_form.settled|as_crispy_field }}
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-6">
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.coin_type|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.bonus|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.accounts_paid_into|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.settled_amount|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ crypto_form.comments|as_crispy_field }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-4">
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
-                                </div>
-                            </form>
-
-                            <form id="giftcard-form" method="post" style="display:none;">
-                                {% csrf_token %}
-                                <input type="hidden" name="form_type" value="giftcard_form">
-                                <div class="row mt-4">
-                                    <div class="col-sm-12 col-md-6">
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.customer|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.transaction_type|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.card_value|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.rate|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.card_type|as_crispy_field }}
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            {{ giftcard_form.settled|as_crispy_field }}
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-6">
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.card_country|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.bonus|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.accounts_paid_into|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.settled_amount|as_crispy_field }}
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            {{ giftcard_form.comments|as_crispy_field }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-4">
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
-                                </div>
-                            </form>
-
-
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-            <!-- Form End -->
-
-
-
-
 
 
             <!-- Footer Start -->
