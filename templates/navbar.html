@@ -14,8 +14,12 @@
                 </div>
             </div>
             <div class="ms-3">
-                <h6 class="mb-0">Jhon Doe</h6>
+                <h6 class="mb-0">{{request.user.first_name}}</h6>
+                {% if request.user.is_staff %}
                 <span>Admin</span>
+                {% else %}
+                <span>Agent</span>
+                {% endif %}
             </div>
         </div>
         <div class="navbar-nav w-100">
